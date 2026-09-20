@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://ine-webscrapper.onrender.com/api';
 
 export default function ProductDetails() {
   const { id } = useParams();

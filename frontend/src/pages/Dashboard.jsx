@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Tag, RefreshCw } from 'lucide-react';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://ine-webscrapper.onrender.com/api';
 
 export default function Dashboard() {
   const [products, setProducts] = useState([]);
