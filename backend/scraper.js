@@ -47,11 +47,12 @@ async function scrapeProduct(page, product, db, maxRetries = 3) {
       });
       await page.waitForTimeout(500);
 
-      // 2. Wait for price block
-      await page.waitForSelector('.price-block', { timeout: 15000 });
-      
-      // 3. Wiggle mouse to trigger "Reveal price" button enablement (Anti-bot obstacle 2)
-      const box = await page.locator('.price-block').boundingBox();
+      // 2. Wait for price block and scroll it into view!
+      const blockLoc = page.locator('.price-block');
+      await blockLoc.waitFor({ timeout: 15000 });
+      await blockLoc.scrollIntoViewIfNeeded(); // VERY IMPORTANT for Render!
+      // 3. Wiggle mouse to trigger "Reveal price" button enablement
+      const box = await blockLoc.boundingBox();
       if (box) {
         await page.mouse.move(box.x + 10, box.y + 10);
         for (let i = 0; i < 20; i++) {
@@ -59,14 +60,15 @@ async function scrapeProduct(page, product, db, maxRetries = 3) {
           await page.waitForTimeout(50);
         }
       }
-
       // 4. Click Reveal Price (Anti-bot obstacle 3)
       const revealBtn = page.locator('button[aria-label="Reveal price"]');
-      if (await revealBtn.isVisible({ timeout: 2000 }) && !(await revealBtn.isDisabled())) {
-        await revealBtn.click();
+      if (await revealBtn.isVisible({ timeout: 5000 }) && !(await revealBtn.isDisabled())) {
+        await revealBtn.click({ force: true });
       } else {
-        console.log('Reveal button not visible or disabled, continuing anyway...');
+        console.log('Reveal button still disabled, continuing anyway...');
       }
+      // Wait extra time for the anti-bot challenge to complete
+      await page.waitForTimeout(4000);
 
       // 5. Wait for the actual price to load
       // Based on typical stores, it might load into a specific class. Let's wait for `.price-idle` to be removed.
