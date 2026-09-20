@@ -69,7 +69,12 @@ async function scrapeProduct(page, product, db, maxRetries = 3) {
       }
       // Wait extra time for the anti-bot challenge to complete
       await page.waitForTimeout(4000);
-
+      const tryAgainBtn = page.getByRole('button', { name: 'Try again' });
+      if (await tryAgainBtn.isVisible({ timeout: 2000 })) {
+        console.log("Mock store played a trick. Clicking 'Try again'...");
+        await tryAgainBtn.click();
+        await page.waitForTimeout(4000);
+      }
       // 5. Wait for the actual price to load
       // Based on typical stores, it might load into a specific class. Let's wait for `.price-idle` to be removed.
       await page.waitForFunction(() => !document.querySelector('.price-idle'), { timeout: 15000 }).catch(() => {});
