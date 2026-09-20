@@ -25,6 +25,16 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
+app.get('/api/store/search', async (req, res) => {
+  try {
+    const { searchCatalog } = await import('./catalog.js');
+    const results = await searchCatalog(req.query.q);
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/products', async (req, res) => {
   try {
     const { name, url } = req.body;
